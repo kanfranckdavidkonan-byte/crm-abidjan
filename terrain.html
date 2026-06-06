@@ -3,290 +3,414 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>&#55357;&#56550; Nouveau Prospect &#8212; Livraison Abidjan</title>
+  <title>&#128230; CRM Terrain &#8212; Livraison Abidjan</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f4f8; color: #202124; min-height: 100vh; padding: 0 0 40px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f4f8; color: #202124; min-height: 100vh; padding-bottom: 68px; }
 
-    header { background: #1a73e8; color: #fff; padding: 18px 16px; text-align: center; }
-    header h1 { font-size: 1.2rem; font-weight: 700; }
-    header p  { font-size: 0.82rem; opacity: 0.85; margin-top: 3px; }
+    header { background: #1a73e8; color: #fff; padding: 12px 16px 8px; position: sticky; top: 0; z-index: 100; }
+    header h1 { font-size: 1rem; font-weight: 700; }
+    header p  { font-size: 0.75rem; opacity: 0.85; margin-top: 1px; }
 
-    .gps-bar {
-      background: #fff; border-bottom: 2px solid #e8f0fe;
-      padding: 12px 16px; display: flex; align-items: center; gap: 12px;
-    }
-    .gps-status { flex: 1; font-size: 0.85rem; }
-    .gps-status .label { color: #5f6368; }
-    .gps-status .val   { font-weight: 700; color: #1a73e8; }
-    .gps-status .addr  { font-size: 0.75rem; color: #3c4043; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e8f0fe; display: flex; z-index: 100; box-shadow: 0 -2px 8px rgba(0,0,0,0.08); }
+    .nav-btn { flex: 1; padding: 7px 4px 9px; border: none; background: none; cursor: pointer; font-size: 0.68rem; color: #5f6368; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .nav-btn .ni { font-size: 1.3rem; }
+    .nav-btn.active { color: #1a73e8; font-weight: 700; }
 
-    .btn-gps {
-      background: #1a73e8; color: #fff; border: none;
-      padding: 10px 16px; border-radius: 8px; font-size: 0.85rem;
-      font-weight: 600; cursor: pointer; white-space: nowrap;
-      min-height: 44px;
-    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .card { background: #fff; border-radius: 12px; padding: 14px 16px; margin: 10px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.09); }
+    .sec-title { font-size: 0.72rem; font-weight: 700; color: #5f6368; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 14px 6px; }
+    label { font-size: 0.78rem; font-weight: 600; color: #3c4043; display: block; margin-bottom: 3px; }
+    input, select, textarea { width: 100%; padding: 9px 12px; border: 1.5px solid #dadce0; border-radius: 8px; font-size: 0.88rem; background: #fff; color: #202124; -webkit-appearance: none; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #1a73e8; }
+    textarea { min-height: 72px; resize: vertical; }
+    .field { margin-bottom: 11px; }
+    .req { color: #e53935; }
+
+    .gps-bar { background: #fff; border-bottom: 2px solid #e8f0fe; padding: 9px 14px; display: flex; align-items: center; gap: 10px; }
+    .gps-status { flex: 1; font-size: 0.8rem; }
+    .gps-status .glabel { color: #5f6368; font-size: 0.7rem; }
+    .gps-status .gval   { font-weight: 700; color: #1a73e8; }
+    .gps-status .gaddr  { font-size: 0.7rem; color: #3c4043; }
+    .btn-gps { background: #1a73e8; color: #fff; border: none; padding: 8px 13px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap; min-height: 38px; }
     .btn-gps.ok  { background: #34a853; }
     .btn-gps.err { background: #ea4335; }
+    .pb { font-size: 0.7rem; padding: 1px 6px; border-radius: 10px; margin-left: 4px; }
+    .pb-ok  { background: #e6f4ea; color: #137333; }
+    .pb-bad { background: #fce8e6; color: #c5221f; }
 
-    .precision-badge {
-      font-size: 0.72rem; padding: 2px 7px; border-radius: 12px;
-      font-weight: 600; margin-left: 6px;
-    }
-    .precision-good { background: #e6f4ea; color: #137333; }
-    .precision-bad  { background: #fce8e6; color: #c5221f; }
-
-    form { padding: 14px 16px; }
-
-    .section-title {
-      font-size: 0.75rem; font-weight: 700; color: #5f6368;
-      text-transform: uppercase; letter-spacing: 0.06em;
-      margin: 18px 0 8px;
-    }
-
-    .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 0.82rem; color: #3c4043; margin-bottom: 4px; font-weight: 500; }
-    .field label span { color: #ea4335; }
-
-    .field input, .field select, .field textarea {
-      width: 100%; padding: 12px; border: 1.5px solid #dadce0;
-      border-radius: 8px; font-size: 0.95rem; background: #fff;
-      transition: border-color 0.2s; -webkit-appearance: none;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      outline: none; border-color: #1a73e8;
-      box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
-    }
-    .field textarea { resize: vertical; min-height: 70px; }
-    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235f6368' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
-
-    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .btn-submit {
-      display: block; width: 100%; padding: 16px;
-      background: #1a73e8; color: #fff; border: none;
-      border-radius: 10px; font-size: 1.05rem; font-weight: 700;
-      cursor: pointer; margin-top: 20px; min-height: 56px;
-      transition: background 0.2s;
-    }
-    .btn-submit:active  { background: #1557b0; }
-    .btn-submit:disabled { background: #9aa0a6; cursor: not-allowed; }
-
-    .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+    .btn-submit { width: 100%; padding: 13px; background: #1a73e8; color: #fff; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 6px; min-height: 48px; }
+    .btn-submit:disabled { background: #dadce0; color: #5f6368; }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 5px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .toast {
-      position: fixed; bottom: 20px; left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #202124; color: #fff; padding: 13px 22px;
-      border-radius: 24px; font-size: 0.9rem; font-weight: 600;
-      transition: transform 0.3s; z-index: 999; white-space: nowrap;
-      max-width: 90vw; text-align: center;
-    }
-    .toast.show  { transform: translateX(-50%) translateY(0); }
-    .toast.green { background: #137333; }
+    #success-screen { display: none; text-align: center; padding: 36px 20px; }
+    #success-screen .sicon { font-size: 3.2rem; margin-bottom: 10px; }
+    #success-screen h2 { font-size: 1.3rem; font-weight: 700; color: #34a853; margin-bottom: 6px; }
+    #success-screen .sdet { font-size: 0.88rem; color: #1a73e8; font-weight: 600; margin: 3px 0; }
+    .btn-new { background: #1a73e8; color: #fff; border: none; border-radius: 10px; padding: 12px 26px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 18px; }
+
+    #gps-mini-map { width: 100%; height: 110px; border-radius: 8px; border: none; margin-top: 6px; display: none; }
+
+    .search-wrap { position: sticky; top: 52px; z-index: 50; background: #f0f4f8; padding: 8px 12px 0; }
+    .search-wrap input { border-radius: 20px; padding: 8px 16px; font-size: 0.86rem; }
+    .filter-bar { display: flex; gap: 6px; padding: 6px 12px 8px; overflow-x: auto; scrollbar-width: none; }
+    .filter-bar::-webkit-scrollbar { display: none; }
+    .fchip { border: 1.5px solid #dadce0; background: #fff; border-radius: 20px; padding: 4px 11px; font-size: 0.76rem; white-space: nowrap; cursor: pointer; color: #3c4043; }
+    .fchip.active { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+
+    .prospect-card { background: #fff; border-radius: 10px; margin: 5px 12px; padding: 11px 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer; display: flex; align-items: center; gap: 11px; }
+    .prospect-card:active { background: #f8f9fa; }
+    .p-avatar { width: 38px; height: 38px; border-radius: 50%; background: #e8f0fe; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: #1a73e8; flex-shrink: 0; }
+    .p-info { flex: 1; min-width: 0; }
+    .p-nom  { font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .p-meta { font-size: 0.73rem; color: #5f6368; margin-top: 2px; }
+    .p-right { text-align: right; flex-shrink: 0; }
+    .sbadge { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+    .s-hi  { background: #e6f4ea; color: #137333; }
+    .s-mid { background: #fef3e2; color: #b06000; }
+    .s-lo  { background: #f1f3f4; color: #5f6368; }
+    .ebadge { display: inline-block; font-size: 0.67rem; font-weight: 600; padding: 2px 7px; border-radius: 10px; margin-top: 3px; }
+    .e0{background:#f1f3f4;color:#5f6368}.e1{background:#e3f2fd;color:#1565c0}
+    .e2{background:#e8f5e9;color:#2e7d32}.e3{background:#fff3e0;color:#e65100}
+    .e4{background:#fce4ec;color:#880e4f}.e5{background:#e8f5e9;color:#1b5e20}
+    .e6{background:#fce8e6;color:#c5221f}.e7{background:#f3e5f5;color:#4a148c}
+
+    #detail-view { display: none; }
+    .det-header { background: #1a73e8; color: #fff; padding: 11px 14px; display: flex; align-items: center; gap: 10px; position: sticky; top: 52px; z-index: 90; }
+    .btn-back { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; line-height: 1; padding: 0 4px 0 0; }
+    .det-header h2 { font-size: 0.95rem; font-weight: 700; flex: 1; }
+
+    .action-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 10px 12px; }
+    .abtn { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px; border-radius: 10px; border: 1.5px solid #dadce0; background: #fff; cursor: pointer; font-size: 0.68rem; font-weight: 600; color: #3c4043; text-decoration: none; }
+    .abtn .ai { font-size: 1.4rem; }
+    .abtn:active { opacity: 0.7; }
+    .abtn.call{border-color:#34a853;color:#34a853}.abtn.wa{border-color:#25d366;color:#25d366}
+    .abtn.sms{border-color:#1a73e8;color:#1a73e8}.abtn.maps{border-color:#ea4335;color:#ea4335}
+    .abtn.next{border-color:#ff6d00;color:#ff6d00}.abtn.note{border-color:#9c27b0;color:#9c27b0}
+    .abtn.disabled{opacity:.35;pointer-events:none}
+
+    .df { font-size: 0.82rem; margin-bottom: 7px; }
+    .dfl { color: #5f6368; font-size: 0.7rem; display: block; margin-bottom: 1px; }
+    .dfv { font-weight: 500; }
+
+    .note-row { display: flex; gap: 8px; margin: 10px 12px; }
+    .note-row input { flex: 1; border-radius: 20px; padding: 8px 13px; }
+    .note-row button { background: #9c27b0; color: #fff; border: none; border-radius: 20px; padding: 8px 14px; font-size: 0.82rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 10px 12px; }
+    .kpi-card { background: #fff; border-radius: 10px; padding: 13px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .kpi-val   { font-size: 1.7rem; font-weight: 700; color: #1a73e8; }
+    .kpi-label { font-size: 0.7rem; color: #5f6368; margin-top: 2px; }
+
+    .funnel-item { display: flex; align-items: center; gap: 9px; margin: 5px 12px; background: #fff; border-radius: 8px; padding: 9px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+    .fl { flex: 1; font-size: 0.83rem; }
+    .fc { font-weight: 700; font-size: 0.95rem; color: #1a73e8; min-width: 26px; text-align: right; }
+    .fb-wrap { width: 72px; background: #e8f0fe; border-radius: 4px; height: 5px; }
+    .fb { height: 5px; border-radius: 4px; background: #1a73e8; }
+
+    .rappel-item { background: #fff8e1; border-radius: 8px; padding: 9px 13px; margin: 5px 12px; border-left: 3px solid #ffc107; cursor: pointer; }
+    .rnom  { font-weight: 600; font-size: 0.86rem; }
+    .rmeta { font-size: 0.73rem; color: #5f6368; margin-top: 2px; }
+
+    .zone-item { display: flex; align-items: center; gap: 8px; margin: 5px 12px; background: #fff; border-radius: 8px; padding: 9px 12px; }
+
+    .loading     { text-align: center; padding: 36px; color: #5f6368; font-size: 0.88rem; }
+    .empty-state { text-align: center; padding: 46px 20px; color: #5f6368; }
+    .empty-state .ei { font-size: 2.8rem; margin-bottom: 10px; }
+
+    .refresh-btn { float: right; background: none; border: 1.5px solid #dadce0; border-radius: 20px; padding: 2px 9px; font-size: 0.75rem; color: #5f6368; cursor: pointer; }
+
+    .toast { position: fixed; bottom: 76px; left: 50%; transform: translateX(-50%) translateY(16px); background: #323232; color: #fff; padding: 9px 18px; border-radius: 20px; font-size: 0.82rem; opacity: 0; transition: all 0.3s; z-index: 999; pointer-events: none; white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis; }
+    .toast.show  { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast.red   { background: #c5221f; }
-
-    .success-screen {
-      display: none; text-align: center; padding: 40px 24px;
-    }
-    .success-screen .icon { font-size: 4rem; margin-bottom: 16px; }
-    .success-screen h2 { font-size: 1.4rem; font-weight: 700; color: #137333; margin-bottom: 8px; }
-    .success-screen p  { color: #5f6368; margin-bottom: 6px; font-size: 0.9rem; }
-    .success-screen .id { font-weight: 700; color: #1a73e8; font-size: 1rem; }
-    .btn-new { margin-top: 24px; display: inline-block; background: #1a73e8; color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 1rem; }
-
-    .map-preview { width: 100%; height: 160px; border-radius: 8px; border: none; margin-top: 10px; }
-
-    /* GPS mini-map in bar */
-    #gps-mini-map { display: none; width: 60px; height: 60px; border-radius: 8px; border: none; flex-shrink: 0; }
+    .toast.green { background: #137333; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>&#55357;&#56550; Nouveau Prospect</h1>
-  <p>Livraison Abidjan &#8212; Saisie terrain</p>
+  <h1 id="page-title">&#128230; CRM Terrain &#8212; Livraison Abidjan</h1>
+  <p id="page-sub">Saisie terrain</p>
 </header>
 
-<!-- Barre GPS -->
-<div class="gps-bar">
-  <iframe id="gps-mini-map"></iframe>
-  <div class="gps-status">
-    <div class="label">Position GPS</div>
-    <div class="val" id="gps-coords-display">&#8212; En attente &#8212;</div>
-    <div class="addr" id="gps-addr-display"></div>
+<!-- ===== ONGLET 1 : NOUVEAU PROSPECT ===== -->
+<div id="tab-new" class="tab-panel active">
+
+  <div class="gps-bar">
+    <div class="gps-status">
+      <div class="glabel">Position GPS</div>
+      <div class="gval" id="gps-coords-display">&#8212; En attente &#8212;</div>
+      <div class="gaddr" id="gps-addr-display"></div>
+    </div>
+    <button class="btn-gps" id="btn-gps" onclick="capturerGPS()">&#127919; Localiser</button>
   </div>
-  <button class="btn-gps" id="btn-gps" onclick="capturerGPS()">&#55356;&#57263; Localiser</button>
+  <iframe id="gps-mini-map" src="" allowfullscreen></iframe>
+
+  <form id="form-prospect" onsubmit="soumettre(event)">
+    <div class="card">
+      <div class="sec-title">IDENTIFICATION</div>
+      <div class="field">
+        <label>Nom / Raison sociale <span class="req">*</span></label>
+        <input type="text" id="f-nom" placeholder="Ex&#160;: Restaurant Chez Maman" required>
+      </div>
+      <div class="field">
+        <label>T&#233;l&#233;phone WhatsApp <span class="req">*</span></label>
+        <input type="tel" id="f-tel" placeholder="07 XX XX XX XX" required>
+      </div>
+      <div class="field">
+        <label>Type de client <span class="req">*</span></label>
+        <select id="f-type" required>
+          <option value="">Choisir&#8230;</option>
+          <option>Restaurant</option><option>H&#244;tel</option>
+          <option>Supermarch&#233;</option><option>Traiteur</option>
+          <option>Grossiste</option><option>Particulier</option><option>Autre</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">LOCALISATION</div>
+      <div class="field">
+        <label>Quartier <span class="req">*</span></label>
+        <select id="f-quartier" required>
+          <option value="">Choisir&#8230;</option>
+          <option>Yopougon</option><option>Abobo</option><option>Cocody</option>
+          <option>Plateau</option><option>Marcory</option><option>Adjam&#233;</option>
+          <option>Port-Bou&#235;t</option><option>Treichville</option>
+          <option>Koumassi</option><option>Attingui&#233;</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Adresse / Rep&#232;re</label>
+        <input type="text" id="f-adresse" placeholder="Rue, rep&#232;re&#8230;">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title">OPPORTUNIT&#201;</div>
+      <div class="field">
+        <label>Volume estim&#233; <span class="req">*</span></label>
+        <select id="f-volume" required>
+          <option value="">Choisir&#8230;</option>
+          <option>Moins de 10&#160;kg/semaine</option>
+          <option>10-50&#160;kg/semaine</option>
+          <option>50-200&#160;kg/semaine</option>
+          <option>200-500&#160;kg/semaine</option>
+          <option>Plus de 500&#160;kg/semaine</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Source</label>
+        <select id="f-source">
+          <option value="">Choisir&#8230;</option>
+          <option>Terrain</option><option>Bouche-&#224;-oreille</option>
+          <option>R&#233;seaux sociaux</option><option>March&#233; Adjam&#233;</option>
+          <option>R&#233;f&#233;rence client</option><option>Autre</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea id="f-notes" placeholder="Informations compl&#233;mentaires&#8230;"></textarea>
+      </div>
+    </div>
+
+    <input type="hidden" id="f-lat">
+    <input type="hidden" id="f-lng">
+    <input type="hidden" id="f-precision">
+
+    <div style="padding:0 12px 20px">
+      <button type="submit" class="btn-submit" id="btn-submit">&#9989; Enregistrer le prospect</button>
+    </div>
+  </form>
+
+  <div id="success-screen">
+    <div class="sicon">&#127881;</div>
+    <h2>Prospect enregistr&#233;&#160;!</h2>
+    <div class="sdet" id="s-id"></div>
+    <div class="sdet" id="s-score"></div>
+    <div class="sdet" id="s-zone"></div>
+    <button class="btn-new" onclick="nouveauProspect()">&#10133; Nouveau prospect</button>
+  </div>
 </div>
 
-<!-- Formulaire principal -->
-<form id="form-prospect" onsubmit="soumettre(event)">
+<!-- ===== ONGLET 2 : PROSPECTS ===== -->
+<div id="tab-prospects" class="tab-panel">
 
-  <div class="section-title">Identification</div>
-
-  <div class="field">
-    <label>Nom du prospect / Raison sociale <span>*</span></label>
-    <input type="text" id="f-nom" placeholder="Ex: Boutique Mode Adjoua" required>
-  </div>
-
-  <div class="field">
-    <label>T&#233;l&#233;phone WhatsApp <span>*</span></label>
-    <input type="tel" id="f-tel" placeholder="+225XXXXXXXXXX" required>
-  </div>
-
-  <div class="row2">
-    <div class="field">
-      <label>Type de client <span>*</span></label>
-      <select id="f-type" required>
-        <option value="">Choisir...</option>
-        <option>Entreprise</option>
-        <option>Boutique en ligne</option>
-        <option>Particulier</option>
-      </select>
+  <div id="list-view">
+    <div class="search-wrap">
+      <input type="search" id="search-input" placeholder="&#128269; Nom, t&#233;l&#233;phone&#8230;" oninput="renderProspects()">
     </div>
-    <div class="field">
-      <label>Volume colis/mois <span>*</span></label>
-      <select id="f-volume" required>
-        <option value="">Choisir...</option>
-        <option>1-10</option>
-        <option>11-50</option>
-        <option>51-100</option>
-        <option>100+</option>
-      </select>
+    <div class="filter-bar">
+      <button class="fchip active" data-e="" onclick="setFilter(this)">Tous</button>
+      <button class="fchip" data-e="Prospect Identifi&#233;" onclick="setFilter(this)">Identifi&#233;s</button>
+      <button class="fchip" data-e="Contact&#233;" onclick="setFilter(this)">Contact&#233;s</button>
+      <button class="fchip" data-e="RDV planifi&#233;" onclick="setFilter(this)">RDV</button>
+      <button class="fchip" data-e="Proposition envoy&#233;e" onclick="setFilter(this)">Proposition</button>
+      <button class="fchip" data-e="N&#233;gociation" onclick="setFilter(this)">N&#233;go</button>
+      <button class="fchip" data-e="Gagn&#233;" onclick="setFilter(this)">Gagn&#233;s</button>
+      <button class="fchip" data-e="Perdu" onclick="setFilter(this)">Perdus</button>
+      <button class="fchip" data-e="Fid&#233;lisation" onclick="setFilter(this)">Fid&#233;lisation</button>
     </div>
-  </div>
-
-  <div class="section-title">Localisation</div>
-
-  <div class="row2">
-    <div class="field">
-      <label>Quartier <span>*</span></label>
-      <select id="f-quartier" required>
-        <option value="">Choisir...</option>
-        <option>Yopougon</option>
-        <option>Abobo</option>
-        <option>Cocody</option>
-        <option>Plateau</option>
-        <option>Marcory</option>
-        <option>Adjam&#233;</option>
-        <option>Port-Bou&#235;t</option>
-        <option>Autre</option>
-      </select>
+    <div class="sec-title">
+      Prospects
+      <button class="refresh-btn" onclick="loadProspects()">&#8635; Actualiser</button>
     </div>
-    <div class="field">
-      <label>Source <span>*</span></label>
-      <select id="f-source" required>
-        <option value="">Choisir...</option>
-        <option>Bouche-&#224;-oreille</option>
-        <option>R&#233;seaux sociaux</option>
-        <option>March&#233; Adjam&#233;</option>
-        <option>R&#233;f&#233;rence client</option>
-        <option>Autre</option>
-      </select>
+    <div id="prospects-list"><div class="loading">Chargement&#8230;</div></div>
+  </div>
+
+  <div id="detail-view">
+    <div class="det-header">
+      <button class="btn-back" onclick="showList()">&#8592;</button>
+      <h2 id="det-nom">Prospect</h2>
+      <span id="det-etape-badge"></span>
     </div>
+
+    <div class="action-grid">
+      <a id="btn-call" class="abtn call" href="#"><span class="ai">&#128222;</span>Appeler</a>
+      <a id="btn-wa"   class="abtn wa"   href="#" target="_blank"><span class="ai">&#128172;</span>WhatsApp</a>
+      <a id="btn-sms"  class="abtn sms"  href="#"><span class="ai">&#128241;</span>SMS</a>
+      <a id="btn-maps" class="abtn maps" href="#" target="_blank"><span class="ai">&#128205;</span>Maps</a>
+      <button id="btn-next" class="abtn next" onclick="advanceStage()">
+        <span class="ai">&#9654;</span><span id="next-label">Avancer</span>
+      </button>
+      <button class="abtn note" onclick="focusNote()"><span class="ai">&#128221;</span>Note</button>
+    </div>
+
+    <div class="card">
+      <div class="df"><span class="dfl">ID</span><span class="dfv" id="d-id"></span></div>
+      <div class="df"><span class="dfl">T&#233;l&#233;phone</span><span class="dfv" id="d-tel"></span></div>
+      <div class="df"><span class="dfl">Type</span><span class="dfv" id="d-type"></span></div>
+      <div class="df"><span class="dfl">Zone / Quartier</span><span class="dfv" id="d-zone"></span></div>
+      <div class="df"><span class="dfl">Adresse</span><span class="dfv" id="d-adresse"></span></div>
+      <div class="df"><span class="dfl">Volume</span><span class="dfv" id="d-volume"></span></div>
+      <div class="df"><span class="dfl">Source</span><span class="dfv" id="d-source"></span></div>
+      <div class="df"><span class="dfl">Score priorit&#233;</span><span class="dfv" id="d-score"></span></div>
+      <div class="df"><span class="dfl">Date cr&#233;ation</span><span class="dfv" id="d-date"></span></div>
+      <div class="df"><span class="dfl">Relances effectu&#233;es</span><span class="dfv" id="d-relances"></span></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title" style="margin:0 0 7px;font-size:0.72rem">NOTES</div>
+      <div id="d-notes" style="font-size:0.83rem;white-space:pre-wrap;color:#3c4043;min-height:28px"></div>
+    </div>
+
+    <div class="note-row">
+      <input type="text" id="note-input" placeholder="Ajouter une note&#8230;">
+      <button onclick="submitNote()">Envoyer</button>
+    </div>
+    <div style="height:12px"></div>
   </div>
-
-  <div class="field">
-    <label>Adresse exacte</label>
-    <input type="text" id="f-adresse" placeholder="Rue, rep&#232;re, description...">
-  </div>
-
-  <div class="field">
-    <label>Notes</label>
-    <textarea id="f-notes" placeholder="Informations compl&#233;mentaires..."></textarea>
-  </div>
-
-  <!-- Champs GPS cach&#233;s -->
-  <input type="hidden" id="f-lat">
-  <input type="hidden" id="f-lng">
-  <input type="hidden" id="f-precision">
-
-  <button type="submit" class="btn-submit" id="btn-submit">
-    &#9989; Enregistrer le prospect
-  </button>
-
-</form>
-
-<!-- &#201;cran de succ&#232;s -->
-<div class="success-screen" id="success-screen">
-  <div class="icon">&#55356;&#57225;</div>
-  <h2>Prospect enregistr&#233; !</h2>
-  <p class="id" id="s-id"></p>
-  <p id="s-score"></p>
-  <p id="s-zone"></p>
-  <button class="btn-new" onclick="nouveauProspect()">&#10133; Nouveau prospect</button>
 </div>
+
+<!-- ===== ONGLET 3 : DASHBOARD ===== -->
+<div id="tab-dashboard" class="tab-panel">
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-val" id="kpi-total">&#8212;</div><div class="kpi-label">Total prospects</div></div>
+    <div class="kpi-card"><div class="kpi-val" id="kpi-score">&#8212;</div><div class="kpi-label">Score moyen</div></div>
+    <div class="kpi-card"><div class="kpi-val" id="kpi-gagnes">&#8212;</div><div class="kpi-label">Gagn&#233;s</div></div>
+    <div class="kpi-card"><div class="kpi-val" id="kpi-rappels">&#8212;</div><div class="kpi-label">&#192; relancer</div></div>
+  </div>
+  <div class="sec-title">Pipeline</div>
+  <div id="funnel-list"><div class="loading">Chargement&#8230;</div></div>
+  <div id="rappels-title" class="sec-title" style="display:none">&#9201; &#192; relancer (inactifs &#8805;&#160;3 jours)</div>
+  <div id="rappels-list"></div>
+  <div class="sec-title">Top zones</div>
+  <div id="zones-list"><div class="loading">Chargement&#8230;</div></div>
+  <div style="height:12px"></div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-new"       onclick="showTab('new')">      <span class="ni">&#10133;</span>Nouveau</button>
+  <button class="nav-btn"        id="nav-prospects" onclick="showTab('prospects')"><span class="ni">&#128203;</span>Prospects</button>
+  <button class="nav-btn"        id="nav-dashboard" onclick="showTab('dashboard')"><span class="ni">&#128202;</span>Dashboard</button>
+</nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  // \u2699\uFE0F \u00C0 REMPLACER apr\u00E8s d\u00E9ploiement Web App
   var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwfg6SJMgpeE8vaKJcI2Ns3AZwIHTFT4J4XcQM9z4ssJ2k-Tqoj1Cbq7ca5G1sTnCfl/exec";
 
-  var gLat = null, gLng = null, gPrecision = null;
+  var ETAPES   = ['Prospect Identifié','Contacté','RDV planifié','Proposition envoyée','Négociation','Gagné','Perdu','Fidélisation'];
+  var ECLASSES = ['e0','e1','e2','e3','e4','e5','e6','e7'];
 
-  // Capture GPS automatique au chargement
-  window.addEventListener('load', function() {
-    if (navigator.geolocation) capturerGPS();
-  });
+  var WA_MSG = {
+    'Prospect Identifié':  "Bonjour {n}, je suis de l’équipe Livraison Abidjan. Nous livrons des produits frais dans votre zone. Puis-je vous présenter nos tarifs ?",
+    'Contacté':             "Bonjour {n}, suite à notre échange, avez-vous eu le temps de réfléchir à notre offre de livraison ? Je reste disponible.",
+    'RDV planifié':         "Bonjour {n}, je vous confirme notre rendez-vous. N’hésitez pas à me contacter pour tout ajustement.",
+    'Proposition envoyée':  "Bonjour {n}, avez-vous bien reçu notre proposition tarifaire ? Je peux l’adapter à vos besoins.",
+    'Négociation':          "Bonjour {n}, je reviens vers vous concernant notre offre. Nous pouvons en discuter pour trouver un accord qui vous convient.",
+    'Gagné':                "Bonjour {n}, bienvenue chez Livraison Abidjan 🙏 Votre première livraison est planifiée. Merci de votre confiance !",
+    'Perdu':                     "Bonjour {n}, nous espérons vous revoir bientôt. Notre offre reste disponible si vous changez d’avis.",
+    'Fidélisation':         "Bonjour {n}, comment se passe notre service de livraison ? Vos retours nous aident à nous améliorer. Merci !"
+  };
+
+  var gLat = null, gLng = null, gPrecision = null;
+  var allProspects = [];
+  var currentFilter = '';
+  var currentProspect = null;
+
+  // ---- Navigation ----
+  function showTab(tab) {
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('nav-' + tab).classList.add('active');
+    document.getElementById('page-sub').textContent =
+      tab === 'new' ? 'Saisie terrain' :
+      tab === 'prospects' ? 'Suivi des prospects' : 'Tableau de bord';
+    if (tab === 'prospects' && allProspects.length === 0) loadProspects();
+    if (tab === 'dashboard') loadDashboard();
+  }
+
+  // ---- GPS ----
+  window.addEventListener('load', function(){ if (navigator.geolocation) capturerGPS(); });
 
   function capturerGPS() {
     var btn = document.getElementById('btn-gps');
-    btn.textContent = '\u23F3';
+    btn.textContent = '⏳';
     btn.className = 'btn-gps';
     btn.disabled = true;
-    document.getElementById('gps-coords-display').textContent = 'Recherche GPS...';
+    document.getElementById('gps-coords-display').textContent = 'Recherche GPS…';
     document.getElementById('gps-addr-display').textContent = '';
-
     navigator.geolocation.getCurrentPosition(
       function(pos) {
         gLat = pos.coords.latitude.toFixed(6);
         gLng = pos.coords.longitude.toFixed(6);
         gPrecision = Math.round(pos.coords.accuracy);
-
         document.getElementById('f-lat').value = gLat;
         document.getElementById('f-lng').value = gLng;
         document.getElementById('f-precision').value = gPrecision;
-
         var badge = gPrecision <= 30
-          ? '<span class="precision-badge precision-good">\u00B1' + gPrecision + 'm \u2713</span>'
-          : '<span class="precision-badge precision-bad">\u00B1' + gPrecision + 'm</span>';
-
+          ? '<span class="pb pb-ok">±' + gPrecision + 'm ✓</span>'
+          : '<span class="pb pb-bad">±' + gPrecision + 'm</span>';
         document.getElementById('gps-coords-display').innerHTML = gLat + ', ' + gLng + badge;
-
-        btn.textContent = '\uD83D\uDD04';
+        btn.textContent = '🔄 OK';
         btn.className = 'btn-gps ok';
         btn.disabled = false;
-
-        // Mini-map
-        var miniMap = document.getElementById('gps-mini-map');
-        miniMap.src = 'https://maps.google.com/maps?q=' + gLat + ',' + gLng + '&z=16&output=embed';
-        miniMap.style.display = 'block';
-
-        // Reverse geocoding
+        var mm = document.getElementById('gps-mini-map');
+        mm.src = 'https://maps.google.com/maps?q=' + gLat + ',' + gLng + '&z=16&output=embed';
+        mm.style.display = 'block';
         fetch('https://nominatim.openstreetmap.org/reverse?lat=' + gLat + '&lon=' + gLng + '&format=json&accept-language=fr')
-          .then(function(r) { return r.json(); })
-          .then(function(d) {
-            var a = d.address;
-            var parts = [a.road, a.suburb, a.city_district, a.city].filter(Boolean);
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            var a = d.address, parts = [a.road, a.suburb, a.city_district, a.city].filter(Boolean);
             document.getElementById('gps-addr-display').textContent = parts.slice(0,3).join(', ');
-            // Auto-remplir quartier si vide
-            var quartierEl = document.getElementById('f-quartier');
-            if (!quartierEl.value) {
-              var quartiers = ['Yopougon','Abobo','Cocody','Plateau','Marcory','Adjam\u00E9','Port-Bou\u00EBt'];
-              var detected = parts.join(' ');
-              quartiers.forEach(function(q) {
-                if (detected.toLowerCase().indexOf(q.toLowerCase()) >= 0) quartierEl.value = q;
-              });
+            var qEl = document.getElementById('f-quartier');
+            if (!qEl.value) {
+              var qs = ['Yopougon','Abobo','Cocody','Plateau','Marcory','Adjamé','Port-Bouët'];
+              var det = parts.join(' ');
+              qs.forEach(function(q){ if (det.toLowerCase().indexOf(q.toLowerCase()) >= 0) qEl.value = q; });
             }
-          }).catch(function() {});
+          }).catch(function(){});
       },
       function(err) {
-        var msgs = {1:'\uD83D\uDD12 Autorisez la localisation dans les param\u00E8tres',2:'\uD83D\uDCE1 Signal GPS indisponible \u2014 essayez en ext\u00E9rieur',3:'\u23F1\uFE0F D\u00E9lai d\u00E9pass\u00E9 \u2014 r\u00E9essayez'};
+        var msgs = {1:'🔒 Autorisez la localisation dans les paramètres',2:'📡 Signal GPS indisponible — essayez en extérieur',3:'⏱️ Délai dépassé — réessayez'};
         document.getElementById('gps-coords-display').textContent = msgs[err.code] || 'Erreur GPS';
-        btn.textContent = '\uD83D\uDD04 R\u00E9essayer';
+        btn.textContent = '🔄 Réessayer';
         btn.className = 'btn-gps err';
         btn.disabled = false;
       },
@@ -294,11 +418,12 @@
     );
   }
 
+  // ---- Nouveau prospect ----
   function soumettre(e) {
     e.preventDefault();
     var btn = document.getElementById('btn-submit');
-
     var payload = {
+      action: 'create',
       nom:       document.getElementById('f-nom').value.trim(),
       tel:       document.getElementById('f-tel').value.trim(),
       type:      document.getElementById('f-type').value,
@@ -311,35 +436,31 @@
       lng:       document.getElementById('f-lng').value,
       precision: document.getElementById('f-precision').value
     };
-
-    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement…';
     btn.disabled = true;
-
-    fetch(WEB_APP_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.status === 'ok') {
-        document.getElementById('form-prospect').style.display = 'none';
-        document.querySelector('.gps-bar').style.display = 'none';
-        var sc = document.getElementById('success-screen');
-        sc.style.display = 'block';
-        document.getElementById('s-id').textContent    = '\uD83C\uDD94 ' + data.id;
-        document.getElementById('s-score').textContent = '\u2B50 Score priorit\u00E9 : ' + data.score + '/100';
-        document.getElementById('s-zone').textContent  = '\uD83D\uDCCD Zone d\u00E9tect\u00E9e : ' + data.zone;
-      } else {
-        afficherToast('\u274C Erreur : ' + (data.message || 'inconnue'), 'red');
-        btn.innerHTML = '\u2705 Enregistrer le prospect';
+    fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.status === 'ok') {
+          document.getElementById('form-prospect').style.display = 'none';
+          document.querySelector('.gps-bar').style.display = 'none';
+          document.getElementById('gps-mini-map').style.display = 'none';
+          document.getElementById('success-screen').style.display = 'block';
+          document.getElementById('s-id').textContent    = '🆔 ' + data.id;
+          document.getElementById('s-score').textContent = '⭐ Score priorité : ' + data.score + '/100';
+          document.getElementById('s-zone').textContent  = '📍 Zone détectée : ' + data.zone;
+          allProspects = [];
+        } else {
+          toast('❌ Erreur : ' + (data.message || 'inconnue'), 'red');
+          btn.innerHTML = '✅ Enregistrer le prospect';
+          btn.disabled = false;
+        }
+      })
+      .catch(function(){
+        toast('⚠️ Connexion impossible. Vérifiez votre réseau.', 'red');
+        btn.innerHTML = '✅ Enregistrer le prospect';
         btn.disabled = false;
-      }
-    })
-    .catch(function(err) {
-      afficherToast('\u26A0\uFE0F Connexion impossible. V\u00E9rifiez votre r\u00E9seau.', 'red');
-      btn.innerHTML = '\u2705 Enregistrer le prospect';
-      btn.disabled = false;
-    });
+      });
   }
 
   function nouveauProspect() {
@@ -350,17 +471,233 @@
     document.getElementById('f-lat').value = '';
     document.getElementById('f-lng').value = '';
     document.getElementById('f-precision').value = '';
-    document.getElementById('gps-coords-display').textContent = '\u2014 En attente \u2014';
-    document.getElementById('btn-submit').innerHTML = '\u2705 Enregistrer le prospect';
+    document.getElementById('gps-coords-display').textContent = '— En attente —';
+    document.getElementById('btn-submit').innerHTML = '✅ Enregistrer le prospect';
     document.getElementById('btn-submit').disabled = false;
     capturerGPS();
   }
 
-  function afficherToast(msg, type) {
+  // ---- Liste prospects ----
+  function loadProspects() {
+    document.getElementById('prospects-list').innerHTML = '<div class="loading">⏳ Chargement…</div>';
+    fetch(WEB_APP_URL + '?action=list')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.status === 'ok') { allProspects = data.prospects; renderProspects(); }
+        else document.getElementById('prospects-list').innerHTML = '<div class="loading">❌ Erreur de chargement</div>';
+      })
+      .catch(function(){
+        document.getElementById('prospects-list').innerHTML = '<div class="loading">⚠️ Hors ligne — vérifiez votre connexion</div>';
+      });
+  }
+
+  function renderProspects() {
+    var search = document.getElementById('search-input').value.toLowerCase();
+    var list   = allProspects.filter(function(p){
+      return (!currentFilter || p.etape === currentFilter) &&
+             (!search || p.nom.toLowerCase().indexOf(search) >= 0 || String(p.tel).indexOf(search) >= 0);
+    });
+    if (list.length === 0) {
+      document.getElementById('prospects-list').innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>Aucun prospect trouvé</p></div>';
+      return;
+    }
+    document.getElementById('prospects-list').innerHTML = list.map(function(p){
+      var init = p.nom ? p.nom.substring(0,2).toUpperCase() : '??';
+      var ei = ETAPES.indexOf(p.etape), ec = ei >= 0 ? ECLASSES[ei] : 'e0';
+      var sc = p.score >= 70 ? 's-hi' : (p.score >= 40 ? 's-mid' : 's-lo');
+      return '<div class="prospect-card" onclick="showDetail(\'' + h(p.id) + '\')">' +
+        '<div class="p-avatar">' + h(init) + '</div>' +
+        '<div class="p-info">' +
+          '<div class="p-nom">' + h(p.nom) + '</div>' +
+          '<div class="p-meta">' + h(p.tel) + ' • ' + h(p.zone || p.quartier) + '</div>' +
+          '<span class="ebadge ' + ec + '">' + h(p.etape) + '</span>' +
+        '</div>' +
+        '<div class="p-right">' +
+          '<span class="sbadge ' + sc + '">' + p.score + '</span>' +
+          '<div style="font-size:.68rem;color:#9aa0a6;margin-top:3px">' + h(p.date) + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function setFilter(btn) {
+    document.querySelectorAll('.fchip').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentFilter = btn.getAttribute('data-e');
+    renderProspects();
+  }
+
+  // ---- Détail prospect ----
+  function showDetail(id) {
+    var p = null;
+    for (var i = 0; i < allProspects.length; i++) { if (allProspects[i].id === id) { p = allProspects[i]; break; } }
+    if (!p) return;
+    currentProspect = p;
+    document.getElementById('list-view').style.display   = 'none';
+    document.getElementById('detail-view').style.display = 'block';
+    document.getElementById('det-nom').textContent = p.nom;
+    var ei = ETAPES.indexOf(p.etape), ec = ei >= 0 ? ECLASSES[ei] : 'e0';
+    document.getElementById('det-etape-badge').innerHTML = '<span class="ebadge ' + ec + '">' + h(p.etape) + '</span>';
+    document.getElementById('d-id').textContent      = p.id;
+    document.getElementById('d-tel').textContent     = p.tel;
+    document.getElementById('d-type').textContent    = p.type    || '—';
+    document.getElementById('d-zone').textContent    = p.zone    || p.quartier || '—';
+    document.getElementById('d-adresse').textContent = p.adresse || '—';
+    document.getElementById('d-volume').textContent  = p.volume  || '—';
+    document.getElementById('d-source').textContent  = p.source  || '—';
+    document.getElementById('d-score').textContent   = p.score + '/100';
+    document.getElementById('d-date').textContent    = p.date;
+    document.getElementById('d-relances').textContent = p.relances + ' fois';
+    document.getElementById('d-notes').textContent   = p.notes || '(aucune note)';
+    var tel = cleanPhone(p.tel);
+    document.getElementById('btn-call').href = 'tel:' + tel;
+    document.getElementById('btn-sms').href  = 'sms:' + tel + '?body=' + encodeURIComponent(buildMsg(p));
+    document.getElementById('btn-wa').href   = 'https://wa.me/' + tel.replace('+','') + '?text=' + encodeURIComponent(buildMsg(p));
+    var mapsUrl = (p.lat && p.lng && p.lat !== 0 && p.lat !== '')
+      ? 'https://maps.google.com/?q=' + p.lat + ',' + p.lng
+      : 'https://maps.google.com/?q=' + encodeURIComponent((p.adresse||'') + ' ' + (p.zone||p.quartier||'') + ' Abidjan');
+    document.getElementById('btn-maps').href = mapsUrl;
+    var isLast = (ei >= ETAPES.length - 1);
+    var btnNext = document.getElementById('btn-next');
+    btnNext.disabled = isLast;
+    if (isLast) { btnNext.classList.add('disabled'); document.getElementById('next-label').textContent = 'Finale'; }
+    else         { btnNext.classList.remove('disabled'); document.getElementById('next-label').textContent = '→ ' + ETAPES[ei+1].split(' ')[0]; }
+    document.getElementById('note-input').value = '';
+  }
+
+  function showList() {
+    document.getElementById('list-view').style.display   = 'block';
+    document.getElementById('detail-view').style.display = 'none';
+    currentProspect = null;
+  }
+
+  function buildMsg(p) {
+    var tmpl = WA_MSG[p.etape] || 'Bonjour {n}, je vous contacte de la part de Livraison Abidjan.';
+    return tmpl.replace('{n}', p.nom.split(' ')[0]);
+  }
+
+  function cleanPhone(tel) {
+    tel = String(tel).replace(/[\s\-().]/g,'');
+    if (tel.startsWith('+'))   return tel;
+    if (tel.startsWith('00'))  return '+' + tel.substring(2);
+    if (tel.startsWith('225')) return '+' + tel;
+    if (tel.startsWith('0'))   return '+225' + tel;
+    return '+225' + tel;
+  }
+
+  // ---- Avancer l'étape ----
+  function advanceStage() {
+    if (!currentProspect) return;
+    var btn = document.getElementById('btn-next');
+    btn.disabled = true;
+    fetch(WEB_APP_URL, { method:'POST', body: JSON.stringify({ action:'advance', id: currentProspect.id }) })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.status === 'ok') {
+          currentProspect.etape = data.etape;
+          for (var i = 0; i < allProspects.length; i++) {
+            if (allProspects[i].id === currentProspect.id) { allProspects[i].etape = data.etape; break; }
+          }
+          toast('✅ Étape avancée : ' + data.etape, 'green');
+          showDetail(currentProspect.id);
+        } else {
+          toast('❌ ' + (data.message || 'Erreur'), 'red');
+          btn.disabled = false;
+        }
+      })
+      .catch(function(){ toast('⚠️ Connexion impossible', 'red'); btn.disabled = false; });
+  }
+
+  // ---- Note ----
+  function focusNote() {
+    var ni = document.getElementById('note-input');
+    ni.focus();
+    ni.scrollIntoView({ behavior:'smooth', block:'center' });
+  }
+
+  function submitNote() {
+    if (!currentProspect) return;
+    var note = document.getElementById('note-input').value.trim();
+    if (!note) return;
+    fetch(WEB_APP_URL, { method:'POST', body: JSON.stringify({ action:'note', id: currentProspect.id, note: note }) })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.status === 'ok') {
+          currentProspect.notes = data.notes;
+          for (var i = 0; i < allProspects.length; i++) {
+            if (allProspects[i].id === currentProspect.id) { allProspects[i].notes = data.notes; break; }
+          }
+          document.getElementById('d-notes').textContent = data.notes;
+          document.getElementById('note-input').value = '';
+          toast('📝 Note ajoutée', 'green');
+        } else { toast('❌ ' + (data.message||'Erreur'), 'red'); }
+      })
+      .catch(function(){ toast('⚠️ Connexion impossible', 'red'); });
+  }
+
+  // ---- Dashboard ----
+  function loadDashboard() {
+    document.getElementById('funnel-list').innerHTML = '<div class="loading">⏳ Chargement…</div>';
+    document.getElementById('zones-list').innerHTML  = '<div class="loading">⏳ Chargement…</div>';
+    fetch(WEB_APP_URL + '?action=kpis')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.status !== 'ok') return;
+        var k = data.kpis;
+        document.getElementById('kpi-total').textContent   = k.total;
+        document.getElementById('kpi-score').textContent   = k.scoreMoyen;
+        document.getElementById('kpi-gagnes').textContent  = k.parEtape['Gagné'] || 0;
+        document.getElementById('kpi-rappels').textContent = (k.rappels||[]).length;
+        var counts = ETAPES.map(function(e){ return k.parEtape[e] || 0; });
+        var maxC   = Math.max.apply(null, counts) || 1;
+        document.getElementById('funnel-list').innerHTML = ETAPES.map(function(e, i){
+          var c = counts[i], pct = Math.round(c/maxC*100);
+          return '<div class="funnel-item">' +
+            '<span class="ebadge ' + ECLASSES[i] + '" style="min-width:90px;text-align:center">' + h(e) + '</span>' +
+            '<div class="fb-wrap"><div class="fb" style="width:' + pct + '%"></div></div>' +
+            '<span class="fc">' + c + '</span></div>';
+        }).join('');
+        var rappels = k.rappels || [];
+        if (rappels.length) {
+          document.getElementById('rappels-title').style.display = 'block';
+          document.getElementById('rappels-list').innerHTML = rappels.map(function(r){
+            return '<div class="rappel-item" onclick="goToProspect(\'' + h(r.id) + '\')">' +
+              '<div class="rnom">' + h(r.nom) + '</div>' +
+              '<div class="rmeta">' + h(r.etape) + ' — ' + r.jours + ' j sans activité</div></div>';
+          }).join('');
+        } else {
+          document.getElementById('rappels-title').style.display = 'none';
+          document.getElementById('rappels-list').innerHTML = '';
+        }
+        var zones = k.topZones || [];
+        document.getElementById('zones-list').innerHTML = zones.length
+          ? zones.map(function(z){
+              return '<div class="zone-item"><span style="flex:1;font-size:.85rem">📍 ' + h(z.zone) + '</span><span class="fc">' + z.count + '</span></div>';
+            }).join('')
+          : '<div class="loading">Aucune donnée</div>';
+      })
+      .catch(function(){
+        document.getElementById('funnel-list').innerHTML = '<div class="loading">⚠️ Hors ligne</div>';
+        document.getElementById('zones-list').innerHTML  = '';
+      });
+  }
+
+  function goToProspect(id) {
+    showTab('prospects');
+    if (allProspects.length === 0) { loadProspects(); setTimeout(function(){ showDetail(id); }, 2500); }
+    else showDetail(id);
+  }
+
+  // ---- Utils ----
+  function h(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function toast(msg, type) {
     var t = document.getElementById('toast');
     t.textContent = msg;
-    t.className = 'toast show' + (type ? ' ' + type : '');
-    setTimeout(function() { t.className = 'toast'; }, 3500);
+    t.className   = 'toast show' + (type ? ' ' + type : '');
+    setTimeout(function(){ t.className = 'toast'; }, 3500);
   }
 </script>
 </body>
