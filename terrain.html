@@ -311,7 +311,7 @@
   <div class="kpi-grid">
     <div class="kpi-card"><div class="kpi-val" id="kpi-total">&#8212;</div><div class="kpi-label">Total prospects</div></div>
     <div class="kpi-card"><div class="kpi-val" id="kpi-score">&#8212;</div><div class="kpi-label">Score moyen</div></div>
-    <div class="kpi-card"><div class="kpi-val" id="kpi-gagnes">&#8212;</div><div class="kpi-label">Gagn&#233;s</div></div>
+    <div class="kpi-card"><div class="kpi-val" id="kpi-gagnes">&#8212;</div><div class="kpi-label">Clients actifs</div></div>
     <div class="kpi-card"><div class="kpi-val" id="kpi-rappels">&#8212;</div><div class="kpi-label">&#192; relancer</div></div>
   </div>
   <div class="sec-title">Pipeline</div>
@@ -389,7 +389,7 @@
           ? '<span class="pb pb-ok">Â±' + gPrecision + 'm âœ“</span>'
           : '<span class="pb pb-bad">Â±' + gPrecision + 'm</span>';
         document.getElementById('gps-coords-display').innerHTML = gLat + ', ' + gLng + badge;
-        btn.textContent = 'ðŸ”„ OK';
+        btn.textContent = 'OK';
         btn.className = 'btn-gps ok';
         btn.disabled = false;
         var mm = document.getElementById('gps-mini-map');
@@ -409,9 +409,9 @@
           }).catch(function(){});
       },
       function(err) {
-        var msgs = {1:'ðŸ”’ Autorisez la localisation dans les paramètres',2:'ðŸ“¡ Signal GPS indisponible â€” essayez en extérieur',3:'â±ï¸ Délai dépassé â€” réessayez'};
+        var msgs = {1:'Autorisez la localisation dans les paramètres',2:'Signal GPS indisponible â€” essayez en extérieur',3:'â±ï¸ Délai dépassé â€” réessayez'};
         document.getElementById('gps-coords-display').textContent = msgs[err.code] || 'Erreur GPS';
-        btn.textContent = 'ðŸ”„ Réessayer';
+        btn.textContent = 'Réessayer';
         btn.className = 'btn-gps err';
         btn.disabled = false;
       },
@@ -447,9 +447,9 @@
           document.querySelector('.gps-bar').style.display = 'none';
           document.getElementById('gps-mini-map').style.display = 'none';
           document.getElementById('success-screen').style.display = 'block';
-          document.getElementById('s-id').textContent    = 'ðŸ†” ' + data.id;
+          document.getElementById('s-id').textContent    = ''' + data.id;
           document.getElementById('s-score').textContent = '★ Score priorité : ' + data.score + '/100';
-          document.getElementById('s-zone').textContent  = 'ðŸ“ Zone détectée : ' + data.zone;
+          document.getElementById('s-zone').textContent  = 'Zone détectée : ' + data.zone;
           allProspects = [];
         } else {
           toast('âŒ Erreur : ' + (data.message || 'inconnue'), 'red');
@@ -499,7 +499,7 @@
              (!search || p.nom.toLowerCase().indexOf(search) >= 0 || String(p.tel).indexOf(search) >= 0);
     });
     if (list.length === 0) {
-      document.getElementById('prospects-list').innerHTML = '<div class="empty-state"><div class="ei">ðŸ“‹</div><p>Aucun prospect trouvé</p></div>';
+      document.getElementById('prospects-list').innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>Aucun prospect trouvé</p></div>';
       return;
     }
     document.getElementById('prospects-list').innerHTML = list.map(function(p){
@@ -649,7 +649,7 @@
           }
           document.getElementById('d-notes').textContent = data.notes;
           document.getElementById('note-input').value = '';
-          toast('ðŸ“ Note ajoutée', 'green');
+          toast('Note ajoutée', 'green');
         } else { toast('âŒ ' + (data.message||'Erreur'), 'red'); }
       })
       .catch(function(){ toast('âš ï¸ Connexion impossible', 'red'); });
@@ -666,7 +666,7 @@
         var k = data.kpis;
         document.getElementById('kpi-total').textContent   = k.total;
         document.getElementById('kpi-score').textContent   = k.scoreMoyen;
-        document.getElementById('kpi-gagnes').textContent  = k.parEtape['Gagné'] || 0;
+        document.getElementById('kpi-gagnes').textContent  = (k.parEtape[ETAPES[4]]||0)+(k.parEtape[ETAPES[5]]||0)+(k.parEtape[ETAPES[6]]||0)+(k.parEtape[ETAPES[7]]||0);
         document.getElementById('kpi-rappels').textContent = (k.rappels||[]).length;
         var counts = ETAPES.map(function(e){ return k.parEtape[e] || 0; });
         var maxC   = Math.max.apply(null, counts) || 1;
@@ -692,7 +692,7 @@
         var zones = k.topZones || [];
         document.getElementById('zones-list').innerHTML = zones.length
           ? zones.map(function(z){
-              return '<div class="zone-item"><span style="flex:1;font-size:.85rem">ðŸ“ ' + h(z.zone) + '</span><span class="fc">' + z.count + '</span></div>';
+              return '<div class="zone-item"><span style="flex:1;font-size:.85rem">' + h(z.zone) + '</span><span class="fc">' + z.count + '</span></div>';
             }).join('')
           : '<div class="loading">Aucune donnée</div>';
       })
