@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>📦 Nouveau Prospect — Livraison Abidjan</title>
+  <title>ðŸ“¦ Nouveau Prospect â€” Livraison Abidjan</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f4f8; color: #202124; min-height: 100vh; padding: 0 0 40px; }
@@ -106,8 +106,8 @@
 <body>
 
 <header>
-  <h1>📦 Nouveau Prospect</h1>
-  <p>Livraison Abidjan — Saisie terrain</p>
+  <h1>ðŸ“¦ Nouveau Prospect</h1>
+  <p>Livraison Abidjan â€” Saisie terrain</p>
 </header>
 
 <!-- Barre GPS -->
@@ -115,10 +115,10 @@
   <iframe id="gps-mini-map"></iframe>
   <div class="gps-status">
     <div class="label">Position GPS</div>
-    <div class="val" id="gps-coords-display">— En attente —</div>
+    <div class="val" id="gps-coords-display">â€” En attente â€”</div>
     <div class="addr" id="gps-addr-display"></div>
   </div>
-  <button class="btn-gps" id="btn-gps" onclick="capturerGPS()">🎯 Localiser</button>
+  <button class="btn-gps" id="btn-gps" onclick="capturerGPS()">ðŸŽ¯ Localiser</button>
 </div>
 
 <!-- Formulaire principal -->
@@ -132,7 +132,7 @@
   </div>
 
   <div class="field">
-    <label>Téléphone WhatsApp <span>*</span></label>
+    <label>TÃ©lÃ©phone WhatsApp <span>*</span></label>
     <input type="tel" id="f-tel" placeholder="+225XXXXXXXXXX" required>
   </div>
 
@@ -170,8 +170,8 @@
         <option>Cocody</option>
         <option>Plateau</option>
         <option>Marcory</option>
-        <option>Adjamé</option>
-        <option>Port-Bouët</option>
+        <option>AdjamÃ©</option>
+        <option>Port-BouÃ«t</option>
         <option>Autre</option>
       </select>
     </div>
@@ -179,10 +179,10 @@
       <label>Source <span>*</span></label>
       <select id="f-source" required>
         <option value="">Choisir...</option>
-        <option>Bouche-à-oreille</option>
-        <option>Réseaux sociaux</option>
-        <option>Marché Adjamé</option>
-        <option>Référence client</option>
+        <option>Bouche-Ã -oreille</option>
+        <option>RÃ©seaux sociaux</option>
+        <option>MarchÃ© AdjamÃ©</option>
+        <option>RÃ©fÃ©rence client</option>
         <option>Autre</option>
       </select>
     </div>
@@ -190,40 +190,40 @@
 
   <div class="field">
     <label>Adresse exacte</label>
-    <input type="text" id="f-adresse" placeholder="Rue, repère, description...">
+    <input type="text" id="f-adresse" placeholder="Rue, repÃ¨re, description...">
   </div>
 
   <div class="field">
     <label>Notes</label>
-    <textarea id="f-notes" placeholder="Informations complémentaires..."></textarea>
+    <textarea id="f-notes" placeholder="Informations complÃ©mentaires..."></textarea>
   </div>
 
-  <!-- Champs GPS cachés -->
+  <!-- Champs GPS cachÃ©s -->
   <input type="hidden" id="f-lat">
   <input type="hidden" id="f-lng">
   <input type="hidden" id="f-precision">
 
   <button type="submit" class="btn-submit" id="btn-submit">
-    ✅ Enregistrer le prospect
+    âœ… Enregistrer le prospect
   </button>
 
 </form>
 
-<!-- Écran de succès -->
+<!-- Ã‰cran de succÃ¨s -->
 <div class="success-screen" id="success-screen">
-  <div class="icon">🎉</div>
-  <h2>Prospect enregistré !</h2>
+  <div class="icon">ðŸŽ‰</div>
+  <h2>Prospect enregistrÃ© !</h2>
   <p class="id" id="s-id"></p>
   <p id="s-score"></p>
   <p id="s-zone"></p>
-  <button class="btn-new" onclick="nouveauProspect()">➕ Nouveau prospect</button>
+  <button class="btn-new" onclick="nouveauProspect()">âž• Nouveau prospect</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  // ⚙️ À REMPLACER après déploiement Web App
-  var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwmeqIwqRozzKE1YITXqmvXB205_ELJCN01gPUAsVi9KHtczxrT4c8siTPyxaWW1rKW/exec";
+  // âš™ï¸ Ã€ REMPLACER aprÃ¨s dÃ©ploiement Web App
+  var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwfg6SJMgpeE8vaKJcI2Ns3AZwIHTFT4J4XcQM9z4ssJ2k-Tqoj1Cbq7ca5G1sTnCfl/exec";
 
   var gLat = null, gLng = null, gPrecision = null;
 
@@ -234,7 +234,7 @@
 
   function capturerGPS() {
     var btn = document.getElementById('btn-gps');
-    btn.textContent = '⏳';
+    btn.textContent = 'â³';
     btn.className = 'btn-gps';
     btn.disabled = true;
     document.getElementById('gps-coords-display').textContent = 'Recherche GPS...';
@@ -251,12 +251,12 @@
         document.getElementById('f-precision').value = gPrecision;
 
         var badge = gPrecision <= 30
-          ? '<span class="precision-badge precision-good">±' + gPrecision + 'm ✓</span>'
-          : '<span class="precision-badge precision-bad">±' + gPrecision + 'm</span>';
+          ? '<span class="precision-badge precision-good">Â±' + gPrecision + 'm âœ“</span>'
+          : '<span class="precision-badge precision-bad">Â±' + gPrecision + 'm</span>';
 
         document.getElementById('gps-coords-display').innerHTML = gLat + ', ' + gLng + badge;
 
-        btn.textContent = '🔄';
+        btn.textContent = 'ðŸ”„';
         btn.className = 'btn-gps ok';
         btn.disabled = false;
 
@@ -275,7 +275,7 @@
             // Auto-remplir quartier si vide
             var quartierEl = document.getElementById('f-quartier');
             if (!quartierEl.value) {
-              var quartiers = ['Yopougon','Abobo','Cocody','Plateau','Marcory','Adjamé','Port-Bouët'];
+              var quartiers = ['Yopougon','Abobo','Cocody','Plateau','Marcory','AdjamÃ©','Port-BouÃ«t'];
               var detected = parts.join(' ');
               quartiers.forEach(function(q) {
                 if (detected.toLowerCase().indexOf(q.toLowerCase()) >= 0) quartierEl.value = q;
@@ -284,9 +284,9 @@
           }).catch(function() {});
       },
       function(err) {
-        var msgs = {1:'🔒 Autorisez la localisation dans les paramètres',2:'📡 Signal GPS indisponible — essayez en extérieur',3:'⏱️ Délai dépassé — réessayez'};
+        var msgs = {1:'ðŸ”’ Autorisez la localisation dans les paramÃ¨tres',2:'ðŸ“¡ Signal GPS indisponible â€” essayez en extÃ©rieur',3:'â±ï¸ DÃ©lai dÃ©passÃ© â€” rÃ©essayez'};
         document.getElementById('gps-coords-display').textContent = msgs[err.code] || 'Erreur GPS';
-        btn.textContent = '🔄 Réessayer';
+        btn.textContent = 'ðŸ”„ RÃ©essayer';
         btn.className = 'btn-gps err';
         btn.disabled = false;
       },
@@ -326,18 +326,18 @@
         document.querySelector('.gps-bar').style.display = 'none';
         var sc = document.getElementById('success-screen');
         sc.style.display = 'block';
-        document.getElementById('s-id').textContent    = '🆔 ' + data.id;
-        document.getElementById('s-score').textContent = '⭐ Score priorité : ' + data.score + '/100';
-        document.getElementById('s-zone').textContent  = '📍 Zone détectée : ' + data.zone;
+        document.getElementById('s-id').textContent    = 'ðŸ†” ' + data.id;
+        document.getElementById('s-score').textContent = 'â­ Score prioritÃ© : ' + data.score + '/100';
+        document.getElementById('s-zone').textContent  = 'ðŸ“ Zone dÃ©tectÃ©e : ' + data.zone;
       } else {
-        afficherToast('❌ Erreur : ' + (data.message || 'inconnue'), 'red');
-        btn.innerHTML = '✅ Enregistrer le prospect';
+        afficherToast('âŒ Erreur : ' + (data.message || 'inconnue'), 'red');
+        btn.innerHTML = 'âœ… Enregistrer le prospect';
         btn.disabled = false;
       }
     })
     .catch(function(err) {
-      afficherToast('⚠️ Connexion impossible. Vérifiez votre réseau.', 'red');
-      btn.innerHTML = '✅ Enregistrer le prospect';
+      afficherToast('âš ï¸ Connexion impossible. VÃ©rifiez votre rÃ©seau.', 'red');
+      btn.innerHTML = 'âœ… Enregistrer le prospect';
       btn.disabled = false;
     });
   }
@@ -350,8 +350,8 @@
     document.getElementById('f-lat').value = '';
     document.getElementById('f-lng').value = '';
     document.getElementById('f-precision').value = '';
-    document.getElementById('gps-coords-display').textContent = '— En attente —';
-    document.getElementById('btn-submit').innerHTML = '✅ Enregistrer le prospect';
+    document.getElementById('gps-coords-display').textContent = 'â€” En attente â€”';
+    document.getElementById('btn-submit').innerHTML = 'âœ… Enregistrer le prospect';
     document.getElementById('btn-submit').disabled = false;
     capturerGPS();
   }
