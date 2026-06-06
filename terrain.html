@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>📦 Nouveau Prospect — Livraison Abidjan</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f4f8; color: #202124; min-height: 100vh; padding: 0 0 40px; }
+
+    header { background: #1a73e8; color: #fff; padding: 18px 16px; text-align: center; }
+    header h1 { font-size: 1.2rem; font-weight: 700; }
+    header p  { font-size: 0.82rem; opacity: 0.85; margin-top: 3px; }
+
+    .gps-bar {
+      background: #fff; border-bottom: 2px solid #e8f0fe;
+      padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .gps-status { flex: 1; font-size: 0.85rem; }
+    .gps-status .label { color: #5f6368; }
+    .gps-status .val   { font-weight: 700; color: #1a73e8; }
+    .gps-status .addr  { font-size: 0.75rem; color: #3c4043; }
+
+    .btn-gps {
+      background: #1a73e8; color: #fff; border: none;
+      padding: 10px 16px; border-radius: 8px; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; white-space: nowrap;
+      min-height: 44px;
+    }
+    .btn-gps.ok  { background: #34a853; }
+    .btn-gps.err { background: #ea4335; }
+
+    .precision-badge {
+      font-size: 0.72rem; padding: 2px 7px; border-radius: 12px;
+      font-weight: 600; margin-left: 6px;
+    }
+    .precision-good { background: #e6f4ea; color: #137333; }
+    .precision-bad  { background: #fce8e6; color: #c5221f; }
+
+    form { padding: 14px 16px; }
+
+    .section-title {
+      font-size: 0.75rem; font-weight: 700; color: #5f6368;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      margin: 18px 0 8px;
+    }
+
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 0.82rem; color: #3c4043; margin-bottom: 4px; font-weight: 500; }
+    .field label span { color: #ea4335; }
+
+    .field input, .field select, .field textarea {
+      width: 100%; padding: 12px; border: 1.5px solid #dadce0;
+      border-radius: 8px; font-size: 0.95rem; background: #fff;
+      transition: border-color 0.2s; -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none; border-color: #1a73e8;
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
+    }
+    .field textarea { resize: vertical; min-height: 70px; }
+    .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%235f6368' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn-submit {
+      display: block; width: 100%; padding: 16px;
+      background: #1a73e8; color: #fff; border: none;
+      border-radius: 10px; font-size: 1.05rem; font-weight: 700;
+      cursor: pointer; margin-top: 20px; min-height: 56px;
+      transition: background 0.2s;
+    }
+    .btn-submit:active  { background: #1557b0; }
+    .btn-submit:disabled { background: #9aa0a6; cursor: not-allowed; }
+
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast {
+      position: fixed; bottom: 20px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #202124; color: #fff; padding: 13px 22px;
+      border-radius: 24px; font-size: 0.9rem; font-weight: 600;
+      transition: transform 0.3s; z-index: 999; white-space: nowrap;
+      max-width: 90vw; text-align: center;
+    }
+    .toast.show  { transform: translateX(-50%) translateY(0); }
+    .toast.green { background: #137333; }
+    .toast.red   { background: #c5221f; }
+
+    .success-screen {
+      display: none; text-align: center; padding: 40px 24px;
+    }
+    .success-screen .icon { font-size: 4rem; margin-bottom: 16px; }
+    .success-screen h2 { font-size: 1.4rem; font-weight: 700; color: #137333; margin-bottom: 8px; }
+    .success-screen p  { color: #5f6368; margin-bottom: 6px; font-size: 0.9rem; }
+    .success-screen .id { font-weight: 700; color: #1a73e8; font-size: 1rem; }
+    .btn-new { margin-top: 24px; display: inline-block; background: #1a73e8; color: #fff; padding: 14px 28px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none; font-size: 1rem; }
+
+    .map-preview { width: 100%; height: 160px; border-radius: 8px; border: none; margin-top: 10px; }
+
+    /* GPS mini-map in bar */
+    #gps-mini-map { display: none; width: 60px; height: 60px; border-radius: 8px; border: none; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📦 Nouveau Prospect</h1>
+  <p>Livraison Abidjan — Saisie terrain</p>
+</header>
+
+<!-- Barre GPS -->
+<div class="gps-bar">
+  <iframe id="gps-mini-map"></iframe>
+  <div class="gps-status">
+    <div class="label">Position GPS</div>
+    <div class="val" id="gps-coords-display">— En attente —</div>
+    <div class="addr" id="gps-addr-display"></div>
+  </div>
+  <button class="btn-gps" id="btn-gps" onclick="capturerGPS()">🎯 Localiser</button>
+</div>
+
+<!-- Formulaire principal -->
+<form id="form-prospect" onsubmit="soumettre(event)">
+
+  <div class="section-title">Identification</div>
+
+  <div class="field">
+    <label>Nom du prospect / Raison sociale <span>*</span></label>
+    <input type="text" id="f-nom" placeholder="Ex: Boutique Mode Adjoua" required>
+  </div>
+
+  <div class="field">
+    <label>Téléphone WhatsApp <span>*</span></label>
+    <input type="tel" id="f-tel" placeholder="+225XXXXXXXXXX" required>
+  </div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Type de client <span>*</span></label>
+      <select id="f-type" required>
+        <option value="">Choisir...</option>
+        <option>Entreprise</option>
+        <option>Boutique en ligne</option>
+        <option>Particulier</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Volume colis/mois <span>*</span></label>
+      <select id="f-volume" required>
+        <option value="">Choisir...</option>
+        <option>1-10</option>
+        <option>11-50</option>
+        <option>51-100</option>
+        <option>100+</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-title">Localisation</div>
+
+  <div class="row2">
+    <div class="field">
+      <label>Quartier <span>*</span></label>
+      <select id="f-quartier" required>
+        <option value="">Choisir...</option>
+        <option>Yopougon</option>
+        <option>Abobo</option>
+        <option>Cocody</option>
+        <option>Plateau</option>
+        <option>Marcory</option>
+        <option>Adjamé</option>
+        <option>Port-Bouët</option>
+        <option>Autre</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Source <span>*</span></label>
+      <select id="f-source" required>
+        <option value="">Choisir...</option>
+        <option>Bouche-à-oreille</option>
+        <option>Réseaux sociaux</option>
+        <option>Marché Adjamé</option>
+        <option>Référence client</option>
+        <option>Autre</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Adresse exacte</label>
+    <input type="text" id="f-adresse" placeholder="Rue, repère, description...">
+  </div>
+
+  <div class="field">
+    <label>Notes</label>
+    <textarea id="f-notes" placeholder="Informations complémentaires..."></textarea>
+  </div>
+
+  <!-- Champs GPS cachés -->
+  <input type="hidden" id="f-lat">
+  <input type="hidden" id="f-lng">
+  <input type="hidden" id="f-precision">
+
+  <button type="submit" class="btn-submit" id="btn-submit">
+    ✅ Enregistrer le prospect
+  </button>
+
+</form>
+
+<!-- Écran de succès -->
+<div class="success-screen" id="success-screen">
+  <div class="icon">🎉</div>
+  <h2>Prospect enregistré !</h2>
+  <p class="id" id="s-id"></p>
+  <p id="s-score"></p>
+  <p id="s-zone"></p>
+  <button class="btn-new" onclick="nouveauProspect()">➕ Nouveau prospect</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ⚙️ À REMPLACER après déploiement Web App
+  var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwmeqIwqRozzKE1YITXqmvXB205_ELJCN01gPUAsVi9KHtczxrT4c8siTPyxaWW1rKW/exec";
+
+  var gLat = null, gLng = null, gPrecision = null;
+
+  // Capture GPS automatique au chargement
+  window.addEventListener('load', function() {
+    if (navigator.geolocation) capturerGPS();
+  });
+
+  function capturerGPS() {
+    var btn = document.getElementById('btn-gps');
+    btn.textContent = '⏳';
+    btn.className = 'btn-gps';
+    btn.disabled = true;
+    document.getElementById('gps-coords-display').textContent = 'Recherche GPS...';
+    document.getElementById('gps-addr-display').textContent = '';
+
+    navigator.geolocation.getCurrentPosition(
+      function(pos) {
+        gLat = pos.coords.latitude.toFixed(6);
+        gLng = pos.coords.longitude.toFixed(6);
+        gPrecision = Math.round(pos.coords.accuracy);
+
+        document.getElementById('f-lat').value = gLat;
+        document.getElementById('f-lng').value = gLng;
+        document.getElementById('f-precision').value = gPrecision;
+
+        var badge = gPrecision <= 30
+          ? '<span class="precision-badge precision-good">±' + gPrecision + 'm ✓</span>'
+          : '<span class="precision-badge precision-bad">±' + gPrecision + 'm</span>';
+
+        document.getElementById('gps-coords-display').innerHTML = gLat + ', ' + gLng + badge;
+
+        btn.textContent = '🔄';
+        btn.className = 'btn-gps ok';
+        btn.disabled = false;
+
+        // Mini-map
+        var miniMap = document.getElementById('gps-mini-map');
+        miniMap.src = 'https://maps.google.com/maps?q=' + gLat + ',' + gLng + '&z=16&output=embed';
+        miniMap.style.display = 'block';
+
+        // Reverse geocoding
+        fetch('https://nominatim.openstreetmap.org/reverse?lat=' + gLat + '&lon=' + gLng + '&format=json&accept-language=fr')
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            var a = d.address;
+            var parts = [a.road, a.suburb, a.city_district, a.city].filter(Boolean);
+            document.getElementById('gps-addr-display').textContent = parts.slice(0,3).join(', ');
+            // Auto-remplir quartier si vide
+            var quartierEl = document.getElementById('f-quartier');
+            if (!quartierEl.value) {
+              var quartiers = ['Yopougon','Abobo','Cocody','Plateau','Marcory','Adjamé','Port-Bouët'];
+              var detected = parts.join(' ');
+              quartiers.forEach(function(q) {
+                if (detected.toLowerCase().indexOf(q.toLowerCase()) >= 0) quartierEl.value = q;
+              });
+            }
+          }).catch(function() {});
+      },
+      function(err) {
+        var msgs = {1:'🔒 Autorisez la localisation dans les paramètres',2:'📡 Signal GPS indisponible — essayez en extérieur',3:'⏱️ Délai dépassé — réessayez'};
+        document.getElementById('gps-coords-display').textContent = msgs[err.code] || 'Erreur GPS';
+        btn.textContent = '🔄 Réessayer';
+        btn.className = 'btn-gps err';
+        btn.disabled = false;
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+
+  function soumettre(e) {
+    e.preventDefault();
+    var btn = document.getElementById('btn-submit');
+
+    var payload = {
+      nom:       document.getElementById('f-nom').value.trim(),
+      tel:       document.getElementById('f-tel').value.trim(),
+      type:      document.getElementById('f-type').value,
+      quartier:  document.getElementById('f-quartier').value,
+      adresse:   document.getElementById('f-adresse').value.trim(),
+      volume:    document.getElementById('f-volume').value,
+      source:    document.getElementById('f-source').value,
+      notes:     document.getElementById('f-notes').value.trim(),
+      lat:       document.getElementById('f-lat').value,
+      lng:       document.getElementById('f-lng').value,
+      precision: document.getElementById('f-precision').value
+    };
+
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
+    btn.disabled = true;
+
+    fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status === 'ok') {
+        document.getElementById('form-prospect').style.display = 'none';
+        document.querySelector('.gps-bar').style.display = 'none';
+        var sc = document.getElementById('success-screen');
+        sc.style.display = 'block';
+        document.getElementById('s-id').textContent    = '🆔 ' + data.id;
+        document.getElementById('s-score').textContent = '⭐ Score priorité : ' + data.score + '/100';
+        document.getElementById('s-zone').textContent  = '📍 Zone détectée : ' + data.zone;
+      } else {
+        afficherToast('❌ Erreur : ' + (data.message || 'inconnue'), 'red');
+        btn.innerHTML = '✅ Enregistrer le prospect';
+        btn.disabled = false;
+      }
+    })
+    .catch(function(err) {
+      afficherToast('⚠️ Connexion impossible. Vérifiez votre réseau.', 'red');
+      btn.innerHTML = '✅ Enregistrer le prospect';
+      btn.disabled = false;
+    });
+  }
+
+  function nouveauProspect() {
+    document.getElementById('form-prospect').reset();
+    document.getElementById('form-prospect').style.display = 'block';
+    document.querySelector('.gps-bar').style.display = 'flex';
+    document.getElementById('success-screen').style.display = 'none';
+    document.getElementById('f-lat').value = '';
+    document.getElementById('f-lng').value = '';
+    document.getElementById('f-precision').value = '';
+    document.getElementById('gps-coords-display').textContent = '— En attente —';
+    document.getElementById('btn-submit').innerHTML = '✅ Enregistrer le prospect';
+    document.getElementById('btn-submit').disabled = false;
+    capturerGPS();
+  }
+
+  function afficherToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (type ? ' ' + type : '');
+    setTimeout(function() { t.className = 'toast'; }, 3500);
+  }
+</script>
+</body>
+</html>
