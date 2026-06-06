@@ -245,14 +245,14 @@
     </div>
     <div class="filter-bar">
       <button class="fchip active" data-e="" onclick="setFilter(this)">Tous</button>
-      <button class="fchip" data-e="Prospect Identifi&#233;" onclick="setFilter(this)">Identifi&#233;s</button>
-      <button class="fchip" data-e="Contact&#233;" onclick="setFilter(this)">Contact&#233;s</button>
-      <button class="fchip" data-e="RDV planifi&#233;" onclick="setFilter(this)">RDV</button>
-      <button class="fchip" data-e="Proposition envoy&#233;e" onclick="setFilter(this)">Proposition</button>
-      <button class="fchip" data-e="N&#233;gociation" onclick="setFilter(this)">N&#233;go</button>
-      <button class="fchip" data-e="Gagn&#233;" onclick="setFilter(this)">Gagn&#233;s</button>
-      <button class="fchip" data-e="Perdu" onclick="setFilter(this)">Perdus</button>
-      <button class="fchip" data-e="Fid&#233;lisation" onclick="setFilter(this)">Fid&#233;lisation</button>
+      <button class="fchip" data-e="&#201;tape 1 &#8212; Prospect Identifi&#233;" onclick="setFilter(this)">&#201;t.1</button>
+      <button class="fchip" data-e="&#201;tape 2 &#8212; Prise de Contact" onclick="setFilter(this)">&#201;t.2</button>
+      <button class="fchip" data-e="&#201;tape 3 &#8212; Devis Envoy&#233;" onclick="setFilter(this)">&#201;t.3</button>
+      <button class="fchip" data-e="&#201;tape 4 &#8212; N&#233;gociation" onclick="setFilter(this)">&#201;t.4</button>
+      <button class="fchip" data-e="&#201;tape 5 &#8212; Contrat Sign&#233;" onclick="setFilter(this)">&#201;t.5</button>
+      <button class="fchip" data-e="&#201;tape 6 &#8212; Onboarding" onclick="setFilter(this)">&#201;t.6</button>
+      <button class="fchip" data-e="&#201;tape 7 &#8212; Client Actif" onclick="setFilter(this)">&#201;t.7</button>
+      <button class="fchip" data-e="&#201;tape 8 &#8212; Fid&#233;lisation" onclick="setFilter(this)">&#201;t.8</button>
     </div>
     <div class="sec-title">
       Prospects
@@ -334,18 +334,18 @@
 <script>
   var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqX8CwjMfpdHcvIlQqiZFSMvPxl1cOYdsKyWvr7TeY8ZU2XyoB7JVOwM3H1a4awTJy/exec";
 
-  var ETAPES   = ['Prospect IdentifiÃ©','ContactÃ©','RDV planifiÃ©','Proposition envoyÃ©e','NÃ©gociation','GagnÃ©','Perdu','FidÃ©lisation'];
+  var ETAPES   = ['Étape 1 — Prospect Identifié','Étape 2 — Prise de Contact','Étape 3 — Devis Envoyé','Étape 4 — Négociation','Étape 5 — Contrat Signé','Étape 6 — Onboarding','Étape 7 — Client Actif','Étape 8 — Fidélisation'];
   var ECLASSES = ['e0','e1','e2','e3','e4','e5','e6','e7'];
 
   var WA_MSG = {
-    'Prospect IdentifiÃ©':  "Bonjour {n}, je suis de lâ€™Ã©quipe Livraison Abidjan. Nous livrons des produits frais dans votre zone. Puis-je vous prÃ©senter nos tarifsÂ ?",
-    'ContactÃ©':             "Bonjour {n}, suite Ã  notre Ã©change, avez-vous eu le temps de rÃ©flÃ©chir Ã  notre offre de livraisonÂ ? Je reste disponible.",
-    'RDV planifiÃ©':         "Bonjour {n}, je vous confirme notre rendez-vous. Nâ€™hÃ©sitez pas Ã  me contacter pour tout ajustement.",
-    'Proposition envoyÃ©e':  "Bonjour {n}, avez-vous bien reÃ§u notre proposition tarifaireÂ ? Je peux lâ€™adapter Ã  vos besoins.",
-    'NÃ©gociation':          "Bonjour {n}, je reviens vers vous concernant notre offre. Nous pouvons en discuter pour trouver un accord qui vous convient.",
-    'GagnÃ©':                "Bonjour {n}, bienvenue chez Livraison Abidjan ðŸ™ Votre premiÃ¨re livraison est planifiÃ©e. Merci de votre confianceÂ !",
-    'Perdu':                     "Bonjour {n}, nous espÃ©rons vous revoir bientÃ´t. Notre offre reste disponible si vous changez dâ€™avis.",
-    'FidÃ©lisation':         "Bonjour {n}, comment se passe notre service de livraisonÂ ? Vos retours nous aident Ã  nous amÃ©liorer. MerciÂ !"
+    'Étape 1 — Prospect Identifié': "Bonjour {n}, je suis de l'équipe Livraison Abidjan. Puis-je vous présenter nos tarifs de livraison pour votre zone ?",
+    'Étape 2 — Prise de Contact':        "Bonjour {n}, suite à notre échange, avez-vous eu le temps de réfléchir à notre offre ? Je reste disponible.",
+    'Étape 3 — Devis Envoyé':       "Bonjour {n}, avez-vous bien reçu notre devis ? Je peux l'adapter à vos besoins si nécessaire.",
+    'Étape 4 — Négociation':        "Bonjour {n}, je reviens vers vous pour notre offre. Nous pouvons discuter pour trouver un accord qui vous convient.",
+    'Étape 5 — Contrat Signé':      "Bonjour {n}, merci ! Votre contrat est signé. Nous préparons le démarrage de vos livraisons. 🙏",
+    'Étape 6 — Onboarding':              "Bonjour {n}, bienvenue chez Livraison Abidjan ! Votre première livraison est planifiée. Merci de votre confiance !",
+    'Étape 7 — Client Actif':            "Bonjour {n}, comment se passent vos livraisons ? Vos retours nous aident à améliorer notre service.",
+    'Étape 8 — Fidélisation':       "Bonjour {n}, c'est un plaisir de vous compter parmi nos clients fidèles ! Avez-vous des amis à qui recommander nos services ?"
   };
 
   var gLat = null, gLng = null, gPrecision = null;
