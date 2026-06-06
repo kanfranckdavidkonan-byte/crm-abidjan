@@ -195,11 +195,11 @@
         <label>Volume estim&#233; <span class="req">*</span></label>
         <select id="f-volume" required>
           <option value="">Choisir&#8230;</option>
-          <option>Moins de 10&#160;kg/semaine</option>
-          <option>10-50&#160;kg/semaine</option>
-          <option>50-200&#160;kg/semaine</option>
-          <option>200-500&#160;kg/semaine</option>
-          <option>Plus de 500&#160;kg/semaine</option>
+          <option value="1-10">1-10 colis/mois</option>
+          <option value="11-50">11-50 colis/mois</option>
+          <option value="51-100">51-100 colis/mois</option>
+          <option value="100+">100+ colis/mois</option>
+          
         </select>
       </div>
       <div class="field">
@@ -276,6 +276,7 @@
       <button id="btn-next" class="abtn next" onclick="advanceStage()">
         <span class="ai">&#9654;</span><span id="next-label">Avancer</span>
       </button>
+      <button class="abtn" style="border-color:#ea4335;color:#c5221f;font-size:0.68rem" onclick="markLost()"><span class="ai">&#10060;</span>Perdu</button>
       <button class="abtn note" onclick="focusNote()"><span class="ai">&#128221;</span>Note</button>
     </div>
 
@@ -374,7 +375,7 @@
     btn.textContent = 'â³';
     btn.className = 'btn-gps';
     btn.disabled = true;
-    document.getElementById('gps-coords-display').textContent = 'Recherche GPSâ€¦';
+    document.getElementById('gps-coords-display').textContent = 'Recherche GPS...';
     document.getElementById('gps-addr-display').textContent = '';
     navigator.geolocation.getCurrentPosition(
       function(pos) {
@@ -401,16 +402,16 @@
             document.getElementById('gps-addr-display').textContent = parts.slice(0,3).join(', ');
             var qEl = document.getElementById('f-quartier');
             if (!qEl.value) {
-              var qs = ['Yopougon','Abobo','Cocody','Plateau','Marcory','AdjamÃ©','Port-BouÃ«t'];
+              var qs = ['Yopougon','Abobo','Cocody','Plateau','Marcory','Adjamé','Port-Bouët'];
               var det = parts.join(' ');
               qs.forEach(function(q){ if (det.toLowerCase().indexOf(q.toLowerCase()) >= 0) qEl.value = q; });
             }
           }).catch(function(){});
       },
       function(err) {
-        var msgs = {1:'ðŸ”’ Autorisez la localisation dans les paramÃ¨tres',2:'ðŸ“¡ Signal GPS indisponible â€” essayez en extÃ©rieur',3:'â±ï¸ DÃ©lai dÃ©passÃ© â€” rÃ©essayez'};
+        var msgs = {1:'ðŸ”’ Autorisez la localisation dans les paramètres',2:'ðŸ“¡ Signal GPS indisponible â€” essayez en extérieur',3:'â±ï¸ Délai dépassé â€” réessayez'};
         document.getElementById('gps-coords-display').textContent = msgs[err.code] || 'Erreur GPS';
-        btn.textContent = 'ðŸ”„ RÃ©essayer';
+        btn.textContent = 'ðŸ”„ Réessayer';
         btn.className = 'btn-gps err';
         btn.disabled = false;
       },
@@ -436,7 +437,7 @@
       lng:       document.getElementById('f-lng').value,
       precision: document.getElementById('f-precision').value
     };
-    btn.innerHTML = '<span class="spinner"></span> Enregistrementâ€¦';
+    btn.innerHTML = '<span class="spinner"></span> Enregistrement...';
     btn.disabled = true;
     fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(function(r){ return r.json(); })
@@ -447,18 +448,18 @@
           document.getElementById('gps-mini-map').style.display = 'none';
           document.getElementById('success-screen').style.display = 'block';
           document.getElementById('s-id').textContent    = 'ðŸ†” ' + data.id;
-          document.getElementById('s-score').textContent = 'â­ Score prioritÃ© : ' + data.score + '/100';
-          document.getElementById('s-zone').textContent  = 'ðŸ“ Zone dÃ©tectÃ©e : ' + data.zone;
+          document.getElementById('s-score').textContent = '★ Score priorité : ' + data.score + '/100';
+          document.getElementById('s-zone').textContent  = 'ðŸ“ Zone détectée : ' + data.zone;
           allProspects = [];
         } else {
           toast('âŒ Erreur : ' + (data.message || 'inconnue'), 'red');
-          btn.innerHTML = 'âœ… Enregistrer le prospect';
+          btn.innerHTML = '✅ Enregistrer le prospect';
           btn.disabled = false;
         }
       })
       .catch(function(){
-        toast('âš ï¸ Connexion impossible. VÃ©rifiez votre rÃ©seau.', 'red');
-        btn.innerHTML = 'âœ… Enregistrer le prospect';
+        toast('âš ï¸ Connexion impossible. Vérifiez votre réseau.', 'red');
+        btn.innerHTML = '✅ Enregistrer le prospect';
         btn.disabled = false;
       });
   }
@@ -472,14 +473,14 @@
     document.getElementById('f-lng').value = '';
     document.getElementById('f-precision').value = '';
     document.getElementById('gps-coords-display').textContent = 'â€” En attente â€”';
-    document.getElementById('btn-submit').innerHTML = 'âœ… Enregistrer le prospect';
+    document.getElementById('btn-submit').innerHTML = '✅ Enregistrer le prospect';
     document.getElementById('btn-submit').disabled = false;
     capturerGPS();
   }
 
   // ---- Liste prospects ----
   function loadProspects() {
-    document.getElementById('prospects-list').innerHTML = '<div class="loading">â³ Chargementâ€¦</div>';
+    document.getElementById('prospects-list').innerHTML = '<div class="loading">â³ Chargement...</div>';
     fetch(WEB_APP_URL + '?action=list')
       .then(function(r){ return r.json(); })
       .then(function(data){
@@ -487,7 +488,7 @@
         else document.getElementById('prospects-list').innerHTML = '<div class="loading">âŒ Erreur de chargement</div>';
       })
       .catch(function(){
-        document.getElementById('prospects-list').innerHTML = '<div class="loading">âš ï¸ Hors ligne â€” vÃ©rifiez votre connexion</div>';
+        document.getElementById('prospects-list').innerHTML = '<div class="loading">âš ï¸ Hors ligne â€” vérifiez votre connexion</div>';
       });
   }
 
@@ -498,7 +499,7 @@
              (!search || p.nom.toLowerCase().indexOf(search) >= 0 || String(p.tel).indexOf(search) >= 0);
     });
     if (list.length === 0) {
-      document.getElementById('prospects-list').innerHTML = '<div class="empty-state"><div class="ei">ðŸ“‹</div><p>Aucun prospect trouvÃ©</p></div>';
+      document.getElementById('prospects-list').innerHTML = '<div class="empty-state"><div class="ei">ðŸ“‹</div><p>Aucun prospect trouvé</p></div>';
       return;
     }
     document.getElementById('prospects-list').innerHTML = list.map(function(p){
@@ -509,7 +510,7 @@
         '<div class="p-avatar">' + h(init) + '</div>' +
         '<div class="p-info">' +
           '<div class="p-nom">' + h(p.nom) + '</div>' +
-          '<div class="p-meta">' + h(p.tel) + ' â€¢ ' + h(p.zone || p.quartier) + '</div>' +
+          '<div class="p-meta">' + h(p.tel) + ' • ' + h(p.zone || p.quartier) + '</div>' +
           '<span class="ebadge ' + ec + '">' + h(p.etape) + '</span>' +
         '</div>' +
         '<div class="p-right">' +
@@ -527,7 +528,7 @@
     renderProspects();
   }
 
-  // ---- DÃ©tail prospect ----
+  // ---- Détail prospect ----
   function showDetail(id) {
     var p = null;
     for (var i = 0; i < allProspects.length; i++) { if (allProspects[i].id === id) { p = allProspects[i]; break; } }
@@ -585,7 +586,7 @@
     return '+225' + tel;
   }
 
-  // ---- Avancer l'Ã©tape ----
+  // ---- Avancer l'étape ----
   function advanceStage() {
     if (!currentProspect) return;
     var btn = document.getElementById('btn-next');
@@ -598,7 +599,7 @@
           for (var i = 0; i < allProspects.length; i++) {
             if (allProspects[i].id === currentProspect.id) { allProspects[i].etape = data.etape; break; }
           }
-          toast('âœ… Ã‰tape avancÃ©eÂ : ' + data.etape, 'green');
+          toast('✅ Ã‰tape avancéeÂ : ' + data.etape, 'green');
           showDetail(currentProspect.id);
         } else {
           toast('âŒ ' + (data.message || 'Erreur'), 'red');
@@ -606,6 +607,25 @@
         }
       })
       .catch(function(){ toast('âš ï¸ Connexion impossible', 'red'); btn.disabled = false; });
+  }
+
+  // ---- Marquer Perdu ----
+  function markLost() {
+    if (!currentProspect) return;
+    if (!confirm('Marquer ce prospect comme Perdu ?')) return;
+    fetch(WEB_APP_URL, { method:'POST', body: JSON.stringify({ action:'lost', id: currentProspect.id }) })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data.status === 'ok') {
+          currentProspect.etape = data.etape;
+          for (var i = 0; i < allProspects.length; i++) {
+            if (allProspects[i].id === currentProspect.id) { allProspects[i].etape = data.etape; break; }
+          }
+          toast('❌ Marqué Perdu', 'red');
+          showDetail(currentProspect.id);
+        } else { toast('❌ ' + (data.message||'Erreur'), 'red'); }
+      })
+      .catch(function(){ toast('⚠ Connexion impossible', 'red'); });
   }
 
   // ---- Note ----
@@ -629,7 +649,7 @@
           }
           document.getElementById('d-notes').textContent = data.notes;
           document.getElementById('note-input').value = '';
-          toast('ðŸ“ Note ajoutÃ©e', 'green');
+          toast('ðŸ“ Note ajoutée', 'green');
         } else { toast('âŒ ' + (data.message||'Erreur'), 'red'); }
       })
       .catch(function(){ toast('âš ï¸ Connexion impossible', 'red'); });
@@ -637,8 +657,8 @@
 
   // ---- Dashboard ----
   function loadDashboard() {
-    document.getElementById('funnel-list').innerHTML = '<div class="loading">â³ Chargementâ€¦</div>';
-    document.getElementById('zones-list').innerHTML  = '<div class="loading">â³ Chargementâ€¦</div>';
+    document.getElementById('funnel-list').innerHTML = '<div class="loading">â³ Chargement...</div>';
+    document.getElementById('zones-list').innerHTML  = '<div class="loading">â³ Chargement...</div>';
     fetch(WEB_APP_URL + '?action=kpis')
       .then(function(r){ return r.json(); })
       .then(function(data){
@@ -646,7 +666,7 @@
         var k = data.kpis;
         document.getElementById('kpi-total').textContent   = k.total;
         document.getElementById('kpi-score').textContent   = k.scoreMoyen;
-        document.getElementById('kpi-gagnes').textContent  = k.parEtape['GagnÃ©'] || 0;
+        document.getElementById('kpi-gagnes').textContent  = k.parEtape['Gagné'] || 0;
         document.getElementById('kpi-rappels').textContent = (k.rappels||[]).length;
         var counts = ETAPES.map(function(e){ return k.parEtape[e] || 0; });
         var maxC   = Math.max.apply(null, counts) || 1;
@@ -663,7 +683,7 @@
           document.getElementById('rappels-list').innerHTML = rappels.map(function(r){
             return '<div class="rappel-item" onclick="goToProspect(\'' + h(r.id) + '\')">' +
               '<div class="rnom">' + h(r.nom) + '</div>' +
-              '<div class="rmeta">' + h(r.etape) + ' â€” ' + r.jours + 'Â j sans activitÃ©</div></div>';
+              '<div class="rmeta">' + h(r.etape) + ' â€” ' + r.jours + 'Â j sans activité</div></div>';
           }).join('');
         } else {
           document.getElementById('rappels-title').style.display = 'none';
@@ -674,7 +694,7 @@
           ? zones.map(function(z){
               return '<div class="zone-item"><span style="flex:1;font-size:.85rem">ðŸ“ ' + h(z.zone) + '</span><span class="fc">' + z.count + '</span></div>';
             }).join('')
-          : '<div class="loading">Aucune donnÃ©e</div>';
+          : '<div class="loading">Aucune donnée</div>';
       })
       .catch(function(){
         document.getElementById('funnel-list').innerHTML = '<div class="loading">âš ï¸ Hors ligne</div>';
